@@ -5,14 +5,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const {contractID, price} = req.body;
-  const checkoutLink = await getCheckoutLink(contractID, price);
+  const apiKey = process.env.PAPER_API_KEY!;
+  const checkoutLink = await getCheckoutLink(contractID, price, apiKey);
   res.status(200).json({ checkoutLink })
 }
 
 //create checkout link intent
 const getCheckoutLink = async (
   contractID: string,
-  price: string
+  price: string,
+  apiKey: string
 ) => {
   try {
     const options = {
@@ -20,7 +22,7 @@ const getCheckoutLink = async (
       headers: {
         Accept: "*/*",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.PAPER_API_KEY}`,
+        Authorization: apiKey,
       },
       body: JSON.stringify({
         quantity: 1,
